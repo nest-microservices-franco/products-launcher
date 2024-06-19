@@ -15,58 +15,64 @@ services:
       - PORT=8080
       - NATS_SERVERS=nats://nats-server:4222
 
-  product-ms:
-    build: ./products
-    ports:
-      - "8081:8081"
-    volumes:
-      - ./products/src:/usr/src/app/src
-    command: pnpm start:dev
-    environment:
-      - PORT=8081
-      - DATABASE_URL=file:./dev.db
-      - NATS_SERVERS=nats://nats-server:4222
+  # product-ms:
+  #   build: ./products
+  #   volumes:
+  #     - ./products/src:/usr/src/app/src
+  #   command: pnpm start:dev
+  #   environment:
+  #     - PORT=8081
+  #     - DATABASE_URL=file:./dev.db
+  #     - NATS_SERVERS=nats://nats-server:4222
 
   #ORDERS-DB
-  orders-db:
-    container_name: orders_database
-    image: postgres:16.2
-    # volumes:
-    #   - ./orders/postgres:/var/lib/postgresql/data
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=123456
-      - POSTGRES_DB=orders
+  # orders-db:
+  #   container_name: orders_database
+  #   image: postgres:16.2
+  #   # volumes:
+  #   #   - ./orders/postgres:/var/lib/postgresql/data
+  #   ports:
+  #     - 5432:5432
+  #   environment:
+  #     - POSTGRES_USER=postgres
+  #     - POSTGRES_PASSWORD=123456
+  #     - POSTGRES_DB=orders
 
   #ORDERS-MS
-  orders-ms:
-    depends_on:
-      - orders-db
-    build: ./orders
-    ports:
-      - "8082:8082"
-    volumes:
-      - ./orders/src:/usr/src/app/src
-    command: pnpm start:dev
-    environment:
-      - PORT=8082
-      - DATABASE_URL=postgresql://postgres:123456@orders-db/orders?schema=public
-      - NATS_SERVERS=nats://nats-server:4222
+  # orders-ms:
+  #   depends_on:
+  #     - orders-db
+  #   build: ./orders
+  #   volumes:
+  #     - ./orders/src:/usr/src/app/src
+  #   command: pnpm start:dev
+  #   environment:
+  #     - PORT=8082
+  #     - DATABASE_URL=postgresql://postgres:123456@orders-db/orders?schema=public
+  #     - NATS_SERVERS=nats://nats-server:4222
 
   #PAYMENTS-MS
-  payments-ms:
-    build: ./payments
-    ports:
-      - "8083:8083"
+  # payments-ms:
+  #   build: ./payments
+  #   volumes:
+  #     - ./payments/src:/usr/src/app/src
+  #   command: pnpm start:dev
+  #   environment:
+  #     - PORT=8083
+  #     - NATS_SERVERS=nats://nats-server:4222
+  #     - STRIPE_SECRET=${STRIPE_SECRET}
+  #     - STRIPE_ENDPOINT_SECRET=${STRIPE_ENDPOINT_SECRET}
+  #     - SUCCES_URL=${SUCCES_URL}
+  #     - CANCEL_URL=${CANCEL_URL}
+
+  #AUTH-MS
+  auth-ms:
+    build: ./auth
     volumes:
-      - ./payments/src:/usr/src/app/src
+      - ./auth/src:/usr/src/app/src
     command: pnpm start:dev
     environment:
-      - PORT=8083
+      - PORT=8084
       - NATS_SERVERS=nats://nats-server:4222
-      - STRIPE_SECRET=${STRIPE_SECRET}
-      - STRIPE_ENDPOINT_SECRET=${STRIPE_ENDPOINT_SECRET}
-      - SUCCES_URL=${SUCCES_URL}
-      - CANCEL_URL=${CANCEL_URL}
+      - DATABASE_URL=${AUTH_DATABASE_URL}
+      - JWT_SECRET=${AUTH_JWT_SECRET}
