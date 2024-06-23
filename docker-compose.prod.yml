@@ -1,0 +1,67 @@
+services:
+  nats-server:
+    image: nats:latest
+
+  # CLIENT-GATEWAY
+  client-gateway:
+    build:
+      context: ./client-gateway
+      dockerfile: dockerfile.prod
+    image: client-gateway-prod
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - NATS_SERVERS=nats://nats-server:4222
+
+  #AUTH-MS
+  auth-ms:
+    build:
+      context: ./auth
+      dockerfile: dockerfile.prod
+    image: auth-prod
+    environment:
+      - PORT=8084
+      - NATS_SERVERS=nats://nats-server:4222
+      - DATABASE_URL=${AUTH_DATABASE_URL}
+      - JWT_SECRET=${AUTH_JWT_SECRET}
+
+  # PRODUCTS-MS
+  product-ms:
+    build:
+      context: ./products
+      dockerfile: dockerfile.prod
+    image: products-prod
+    environment:
+      - PORT=8081
+      - DATABASE_URL=file:./dev.db
+      - NATS_SERVERS=nats://nats-server:4222
+
+  # PAYMENTS-MS
+  payments-ms:
+    build:
+      context: ./payments
+      dockerfile: dockerfile.prod
+    image: payments-prod
+    ports:
+      - "8083:8083"
+    environment:
+      - PORT=8083
+      - NATS_SERVERS=nats://nats-server:4222
+      - STRIPE_SECRET=${STRIPE_SECRET}
+      - STRIPE_ENDPOINT_SECRET=${STRIPE_ENDPOINT_SECRET}
+      - SUCCES_URL=${SUCCES_URL}
+      - CANCEL_URL=${CANCEL_URL}
+
+  # ORDERS-MS
+  orders-ms:
+    build:
+      context: ./orders
+      dockerfile: dockerfile.prod
+      args:
+        - ORDERS_DATABASE_URL=${ORDERS_DATABASE_URL}
+    image: orders-prod
+    environment:
+      - PORT=8082
+      - DATABASE_URL=${ORDERS_DATABASE_URL}
+      - NATS_SERVERS=nats://nats-server:4222
