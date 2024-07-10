@@ -59,6 +59,8 @@ services:
     volumes:
       - ./payments/src:/usr/src/app/src
     command: pnpm start:dev
+    ports:
+      - "8083:8083"
     environment:
       - PORT=8083
       - NATS_SERVERS=nats://nats-server:4222

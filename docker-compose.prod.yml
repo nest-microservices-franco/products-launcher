@@ -7,7 +7,7 @@ services:
     build:
       context: ./client-gateway
       dockerfile: dockerfile.prod
-    image: client-gateway-prod
+    image: southamerica-east1-docker.pkg.dev/nest-microservices-427320/image-registry/client-gateway
     ports:
       - "8080:8080"
     environment:
@@ -19,7 +19,7 @@ services:
     build:
       context: ./auth
       dockerfile: dockerfile.prod
-    image: auth-prod
+    image: southamerica-east1-docker.pkg.dev/nest-microservices-427320/image-registry/auth-ms
     environment:
       - PORT=8084
       - NATS_SERVERS=nats://nats-server:4222
@@ -31,7 +31,7 @@ services:
     build:
       context: ./products
       dockerfile: dockerfile.prod
-    image: products-prod
+    image: southamerica-east1-docker.pkg.dev/nest-microservices-427320/image-registry/products-ms
     environment:
       - PORT=8081
       - DATABASE_URL=file:./dev.db
@@ -42,7 +42,7 @@ services:
     build:
       context: ./payments
       dockerfile: dockerfile.prod
-    image: payments-prod
+    image: southamerica-east1-docker.pkg.dev/nest-microservices-427320/image-registry/payments-ms
     ports:
       - "8083:8083"
     environment:
@@ -60,7 +60,7 @@ services:
       dockerfile: dockerfile.prod
       args:
         - ORDERS_DATABASE_URL=${ORDERS_DATABASE_URL}
-    image: orders-prod
+    image: southamerica-east1-docker.pkg.dev/nest-microservices-427320/image-registry/orders-ms
     environment:
       - PORT=8082
       - DATABASE_URL=${ORDERS_DATABASE_URL}
